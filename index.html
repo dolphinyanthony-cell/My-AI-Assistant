@@ -97,7 +97,7 @@ button:hover {
 
 <script>
 
-function sendMessage() {
+async function sendMessage() {
 
     let input = document.getElementById("input");
     let message = input.value;
@@ -106,28 +106,46 @@ function sendMessage() {
 
     let chat = document.getElementById("chat");
 
-
     chat.innerHTML += `
     <div class="message user">
         ${message}
     </div>
     `;
 
-
     input.value = "";
+
+    chat.innerHTML += `
+    <div class="message ai">
+        Thinking...
+    </div>
+    `;
+
+    chat.scrollTop = chat.scrollHeight;
+
+
+    let response = await fetch("http://localhost:3000/chat", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            message: message
+        })
+    });
+
+
+    let data = await response.json();
 
 
     chat.innerHTML += `
     <div class="message ai">
-        I received your message! My AI brain will be connected next.
+        ${data.reply}
     </div>
     `;
-
 
     chat.scrollTop = chat.scrollHeight;
 }
 
 </script>
-
 </body>
 </html>
